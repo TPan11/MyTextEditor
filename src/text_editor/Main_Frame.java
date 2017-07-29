@@ -4,17 +4,21 @@ import java.awt.EventQueue;
 import java.awt.Font;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.*;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.DefaultEditorKit.CopyAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,6 +30,7 @@ import java.util.logging.Logger;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
+
 
 public class Main_Frame extends JFrame{
 
@@ -46,6 +51,9 @@ public class Main_Frame extends JFrame{
 	private JButton btnCopy;
 	private JButton btnPaste;
 	private JButton btnCut;
+	private JMenuBar menuBar;
+	private JMenu menu;
+	private JMenuItem menuItem;
 	
 	/**
 	 * Launch the application.
@@ -56,6 +64,7 @@ public class Main_Frame extends JFrame{
 				try {
 					Main_Frame window = new Main_Frame();
 					window.frmTextEditor.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -71,7 +80,7 @@ public class Main_Frame extends JFrame{
 		initialize();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
 		fileOpener.setFileFilter(filter);
-
+		
 		frmTextEditor.setLocationRelativeTo(null);
 	}
 
@@ -80,11 +89,20 @@ public class Main_Frame extends JFrame{
 	 */
 	private void initialize() {
 		frmTextEditor = new JFrame();
+		frmTextEditor.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frmTextEditor.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+            	int confirm = JOptionPane.showConfirmDialog(frmTextEditor, "Are you sure you want to exit the program?", "Exit", JOptionPane.YES_NO_OPTION);
+        		if(confirm == JOptionPane.YES_OPTION){
+        			System.exit(0);
+        		}
+        		else{}
+            }
+        });
 		frmTextEditor.setTitle("Text Editor");
 		frmTextEditor.setBounds(100, 100, 713, 470);
-		frmTextEditor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmTextEditor.setResizable(true);
 		frmTextEditor.getContentPane().setLayout(null);
-		
 		
 		fileOpener = new JFileChooser();
 		fileOpener.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -92,6 +110,47 @@ public class Main_Frame extends JFrame{
 		saveDialog = new JFileChooser();
 		saveDialog.setDialogType(JFileChooser.SAVE_DIALOG);
 		saveDialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
+		menuBar = new JMenuBar();
+		frmTextEditor.setJMenuBar(menuBar);
+		
+		menu = new JMenu("File");
+		menu.setMnemonic(KeyEvent.VK_F);
+		menuBar.add(menu);
+		
+		menuItem = new JMenuItem("New", KeyEvent.VK_N);
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnNewActionPerformed(e);
+			}
+		});
+		menu.add(menuItem);
+		
+		menuItem = new JMenuItem("Open", KeyEvent.VK_O);
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnOpenActionPerformed(e);
+			}
+		});
+		menu.add(menuItem);
+		
+		menuItem = new JMenuItem("Save", KeyEvent.VK_S);
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnSaveActionPerformed(e);
+			}
+		});
+		menu.add(menuItem);
+		
+		menu.addSeparator();
+		
+		menuItem = new JMenuItem("Exit", KeyEvent.VK_E);
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnExitActionPerformed(e);
+			}
+		});
+		menu.add(menuItem);
 		
 		toolBar = new JToolBar();
 		toolBar.setBounds(0, 0, 695, 62);
@@ -209,7 +268,7 @@ public class Main_Frame extends JFrame{
 		
 		
 		scrollPane = new JScrollPane(display);
-		scrollPane.setBounds(0, 57, 695, 366);
+		scrollPane.setBounds(0, 70, 695, 353);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		frmTextEditor.getContentPane().add(scrollPane);
@@ -350,5 +409,12 @@ public class Main_Frame extends JFrame{
 		if(size == 3)
 			return;
 		display.setFont(new Font(Name, style, --size));
+	}
+	
+	private void btnExitActionPerformed(ActionEvent evt){
+		int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit the program?", "Exit", JOptionPane.YES_NO_OPTION);
+		if(confirm == JOptionPane.YES_OPTION){
+			System.exit(0);
+		}
 	}
 }
